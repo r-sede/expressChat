@@ -6,12 +6,18 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/chat');
+
+//overide mongoose promise library
 mongoose.Promise = Promise;
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
+
+
+
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -24,6 +30,7 @@ app.use(session({
   resave: true,
   saveUninitialized: false
 }));
+
 
 
 /* app.use(function printSession(req, res, next) {

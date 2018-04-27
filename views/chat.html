@@ -7,10 +7,14 @@
     <title>chat</title>
 </head>
 <body>
+    <div id="messagesView">
+
+    </div>
     <form action="/sendmessage" method="POST" id="postmessage">
         <textarea name="content" id="content" cols="30" rows="10" required></textarea>
         <input type="submit" value="send">
     </form>
+    <script src="javascripts/socket.io.slim.js" type="text/javascript"></script>
     <script src="javascripts/chat.js" type="text/javascript"></script>
 </body>
 </html>

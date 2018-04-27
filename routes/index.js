@@ -98,9 +98,9 @@ router.get('/chat', function (req, res, next) {
 router.get('/logout', function (req, res, next) {
   if (req.session) {
     // delete session object
-    req.session.destroy(function (err) {
-      if (err) {
-        return next(err);
+    req.session.destroy(function (error) {
+      if (error) {
+        return next(error);
       } else {
         return res.redirect('/');
       }
@@ -108,10 +108,39 @@ router.get('/logout', function (req, res, next) {
   }
 });
 
-router.post('/postmessage', function(req, res, next) {
+router.get('/messages', function(req,res,next) {
   if(req.session) {
-    if(req.body.content) {
-      console.log(req.session.userId);
+
+    User.findById(req.session.userId).exec(function(error,user){
+      if (error) {
+        return next(error);
+      }else if (user === null) {
+        return res.redirect('/login');
+      }else {
+        Chat.find().sort('-createdAt')
+        .exec(function(error, messages) {
+          if (error) {
+            return next(error);
+          }
+          messages = messages.map(itm => {
+            const className = (user.username === itm.from) ? 'me' : 'other';
+            /* return {className: className,from: itm.from, content: itm.content, createdAt:itm.createdAt,_id:itm._id,__v:itm.__v}; */
+            return {className: className,...itm._doc};
+          });
+         /*  console.log(JSON.stringify(messages,null,2)); */
+          res.json(messages);
+        })
+      }
+    })
+    
+
+  }
+});
+
+router.post('/postmessage', function(req, res, next) {
+  if (req.session) {
+    if (req.body.content) {
+/*       console.log(req.session.userId); */
       User.findById(req.session.userId)
       .exec(function (error, user) {
         if (error) {
@@ -139,8 +168,6 @@ router.post('/postmessage', function(req, res, next) {
         }
       });
     }
-  }
+  }//rdeirect
 });
-module.exports = router;
-
 module.exports = router;
