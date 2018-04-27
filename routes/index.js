@@ -4,6 +4,7 @@ var path = require('path');
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false });
 var User = require('../models/User');
+var Chat = require('../models/Chat');
 /* GET home page. */
 router.get('/', function(req, res, next) {
   res.sendFile(path.join(__dirname, '../public/accueuil.html'));
@@ -24,7 +25,8 @@ router.post('/register', function (req, res, next) {
     return next(err);
   }
 
-  if (req.body.email &&
+  if (
+    /* req.body.email && */
     req.body.username &&
     req.body.password &&
     req.body.passwordConf) {
@@ -62,7 +64,8 @@ router.post('/login', function(req,res,next) {
         return next(err);
       } else {
         req.session.userId = user._id;
-        return res.redirect('/profile');
+        req.session.save();
+        return res.redirect('/chat');
       }
     });
   } else {
@@ -71,19 +74,21 @@ router.post('/login', function(req,res,next) {
     return next(err);
   }
 });
+
 // GET route after registering
-router.get('/profile', function (req, res, next) {
+router.get('/chat', function (req, res, next) {
   User.findById(req.session.userId)
     .exec(function (error, user) {
       if (error) {
         return next(error);
       } else {
         if (user === null) {
-          var err = new Error('Not authorized! Go back!');
+/*           var err = new Error('Not authorized! Go back!');
           err.status = 400;
-          return next(err);
+          return next(err); */
+          return res.redirect('/login');
         } else {
-          return res.send('<h1>Name: </h1>' + user.username + '<h2>Mail: </h2>' + user.email + '<br><a type="button" href="/logout">Logout</a>')
+          res.sendFile(path.join(__dirname, '../views/chat.html'));
         }
       }
     });
@@ -103,6 +108,39 @@ router.get('/logout', function (req, res, next) {
   }
 });
 
+router.post('/postmessage', function(req, res, next) {
+  if(req.session) {
+    if(req.body.content) {
+      console.log(req.session.userId);
+      User.findById(req.session.userId)
+      .exec(function (error, user) {
+        if (error) {
+          return next(error);
+        } else {
+          if (user === null) {
+  /*           var err = new Error('Not authorized! Go back!');
+            err.status = 400;
+            return next(err); */
+            return res.redirect('/login');
+          } else {
+            var chatData = {
+              from: user.username,
+              content: req.body.content
+            };
+            Chat.create(chatData, function (error, user) {
+              if (error) {
+                return next(error);
+              } else {
+                console.log('ok');
+                res.sendStatus(201);
+              }
+            });
+          }
+        }
+      });
+    }
+  }
+});
 module.exports = router;
 
 module.exports = router;

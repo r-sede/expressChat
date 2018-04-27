@@ -6,7 +6,7 @@ var session = require('express-session');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/chat');
-
+mongoose.Promise = Promise;
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
