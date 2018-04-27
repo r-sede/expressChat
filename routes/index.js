@@ -1,18 +1,20 @@
-var express = require('express');
-var router = express.Router();
-var path = require('path');
-var bodyParser = require('body-parser');
-var urlencodedParser = bodyParser.urlencoded({ extended: false });
-var User = require('../models/User');
-var Chat = require('../models/Chat');
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.sendFile(path.join(__dirname, '../public/accueuil.html'));
-});
-router.get('/register', function(req,res,next) {
-  res.sendFile(path.join(__dirname, '../views/register.html'));
-});
-router.get('/login', function(req,res,next) {
+module.exports = function (io) {
+
+  var express = require('express');
+  var router = express.Router();
+  var path = require('path');
+  var bodyParser = require('body-parser');
+  var urlencodedParser = bodyParser.urlencoded({ extended: false });
+  var User = require('../models/User');
+  var Chat = require('../models/Chat');
+  /* GET home page. */
+  router.get('/', function(req, res, next) {
+    res.sendFile(path.join(__dirname, '../public/accueuil.html'));
+  });
+  router.get('/register', function(req,res,next) {
+    res.sendFile(path.join(__dirname, '../views/register.html'));
+  });
+  router.get('/login', function(req,res,next) {
   res.sendFile(path.join(__dirname, '../views/login.html'));
 });
 //POST route for updating data
@@ -24,66 +26,66 @@ router.post('/register', function (req, res, next) {
     res.send("passwords dont match");
     return next(err);
   }
-
+  
   if (
     /* req.body.email && */
     req.body.username &&
     req.body.password &&
     req.body.passwordConf) {
-
-    var userData = {
-      email: req.body.email,
-      username: req.body.username,
-      password: req.body.password,
-      passwordConf: req.body.passwordConf,
+      
+      var userData = {
+        email: req.body.email,
+        username: req.body.username,
+        password: req.body.password,
+        passwordConf: req.body.passwordConf,
+      }
+      
+      User.create(userData, function (error, user) {
+        if (error) {
+          return next(error);
+        } else {
+          req.session.userId = user._id;
+          return res.redirect('/profile');
+        }
+      });
+      
+    } else {
+      var err = new Error('All fields required.');
+      err.status = 400;
+      return next(err);
     }
-
-    User.create(userData, function (error, user) {
-      if (error) {
-        return next(error);
-      } else {
-        req.session.userId = user._id;
-        return res.redirect('/profile');
-      }
-    });
-
-  } else {
-    var err = new Error('All fields required.');
-    err.status = 400;
-    return next(err);
-  }
-})
-
-router.post('/login', function(req,res,next) {
-  /* return res.send(req.body.username); */
-  if (req.body.username && req.body.password) {
-    User.authenticate(req.body.username, req.body.password, function (error, user) {
-      if (error || !user) {
-        var err = new Error('Wrong email or password.');
-        err.status = 401;
-        return next(err);
-      } else {
-        req.session.userId = user._id;
-        req.session.save();
-        return res.redirect('/chat');
-      }
-    });
-  } else {
-    var err = new Error('All fields required.');
-    err.status = 400;
-    return next(err);
-  }
-});
-
-// GET route after registering
-router.get('/chat', function (req, res, next) {
-  User.findById(req.session.userId)
+  })
+  
+  router.post('/login', function(req,res,next) {
+    /* return res.send(req.body.username); */
+    if (req.body.username && req.body.password) {
+      User.authenticate(req.body.username, req.body.password, function (error, user) {
+        if (error || !user) {
+          var err = new Error('Wrong email or password.');
+          err.status = 401;
+          return next(err);
+        } else {
+          req.session.userId = user._id;
+          req.session.save();
+          return res.redirect('/chat');
+        }
+      });
+    } else {
+      var err = new Error('All fields required.');
+      err.status = 400;
+      return next(err);
+    }
+  });
+  
+  // GET route after registering
+  router.get('/chat', function (req, res, next) {
+    User.findById(req.session.userId)
     .exec(function (error, user) {
       if (error) {
         return next(error);
       } else {
         if (user === null) {
-/*           var err = new Error('Not authorized! Go back!');
+          /*           var err = new Error('Not authorized! Go back!');
           err.status = 400;
           return next(err); */
           return res.redirect('/login');
@@ -92,82 +94,85 @@ router.get('/chat', function (req, res, next) {
         }
       }
     });
-});
-
-// GET for logout logout
-router.get('/logout', function (req, res, next) {
-  if (req.session) {
-    // delete session object
-    req.session.destroy(function (error) {
-      if (error) {
-        return next(error);
-      } else {
-        return res.redirect('/');
-      }
-    });
-  }
-});
-
-router.get('/messages', function(req,res,next) {
-  if(req.session) {
-
-    User.findById(req.session.userId).exec(function(error,user){
-      if (error) {
-        return next(error);
-      }else if (user === null) {
-        return res.redirect('/login');
-      }else {
-        Chat.find().sort('-createdAt')
-        .exec(function(error, messages) {
-          if (error) {
-            return next(error);
-          }
-          messages = messages.map(itm => {
-            const className = (user.username === itm.from) ? 'me' : 'other';
-            /* return {className: className,from: itm.from, content: itm.content, createdAt:itm.createdAt,_id:itm._id,__v:itm.__v}; */
-            return {className: className,...itm._doc};
-          });
-         /*  console.log(JSON.stringify(messages,null,2)); */
-          res.json(messages);
-        })
-      }
-    })
-    
-
-  }
-});
-
-router.post('/postmessage', function(req, res, next) {
-  if (req.session) {
-    if (req.body.content) {
-/*       console.log(req.session.userId); */
-      User.findById(req.session.userId)
-      .exec(function (error, user) {
+  });
+  
+  // GET for logout logout
+  router.get('/logout', function (req, res, next) {
+    if (req.session) {
+      // delete session object
+      req.session.destroy(function (error) {
         if (error) {
           return next(error);
         } else {
-          if (user === null) {
-  /*           var err = new Error('Not authorized! Go back!');
-            err.status = 400;
-            return next(err); */
-            return res.redirect('/login');
-          } else {
-            var chatData = {
-              from: user.username,
-              content: req.body.content
-            };
-            Chat.create(chatData, function (error, user) {
-              if (error) {
-                return next(error);
-              } else {
-                console.log('ok');
-                res.sendStatus(201);
-              }
-            });
-          }
+          return res.redirect('/');
         }
       });
     }
-  }//rdeirect
-});
-module.exports = router;
+  });
+  
+  router.get('/messages', function(req,res,next) {
+    if(req.session) {
+      
+      User.findById(req.session.userId).exec(function(error,user){
+        if (error) {
+          return next(error);
+        }else if (user === null) {
+          return res.redirect('/login');
+        }else {
+          Chat.find().sort('-createdAt')
+          .exec(function(error, messages) {
+            if (error) {
+              return next(error);
+            }
+            messages = messages.map(itm => {
+              const className = (user.username === itm.from) ? 'me' : 'other';
+              /* return {className: className,from: itm.from, content: itm.content, createdAt:itm.createdAt,_id:itm._id,__v:itm.__v}; */
+              return {className: className,...itm._doc};
+            });
+            /*  console.log(JSON.stringify(messages,null,2)); */
+            res.json(messages);
+          })
+        }
+      })
+      
+      
+    }
+  });
+  
+  router.post('/postmessage', function(req, res, next) {
+    if (req.session) {
+      if (req.body.content) {
+        /*       console.log(req.session.userId); */
+        User.findById(req.session.userId)
+        .exec(function (error, user) {
+          if (error) {
+            return next(error);
+          } else {
+            if (user === null) {
+              /*           var err = new Error('Not authorized! Go back!');
+              err.status = 400;
+              return next(err); */
+              return res.redirect('/login');
+            } else {
+              var chatData = {
+                from: user.username,
+                content: req.body.content
+              };
+              Chat.create(chatData, function (error, chat) {
+                if (error) {
+                  return next(error);
+                } else {
+                  io.emit("chat", chat);
+                  console.log('ok');
+                  res.sendStatus(201);
+                }
+              });
+            }
+          }
+        });
+      }
+    }//rdeirect
+  });
+  return router;
+}
+  

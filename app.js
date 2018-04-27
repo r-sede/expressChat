@@ -9,12 +9,13 @@ mongoose.connect('mongodb://localhost/chat');
 
 //overide mongoose promise library
 mongoose.Promise = Promise;
-
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
+var socket_io    = require( "socket.io" );
 var app = express();
+var io= socket_io();
+app.io=io;
 
+var indexRouter = require('./routes/index')(io);
+var usersRouter = require('./routes/users');
 
 
 
@@ -31,7 +32,9 @@ app.use(session({
   saveUninitialized: false
 }));
 
-
+io.on("connection", (socket) => {
+  console.log("Socket is connected...")
+});
 
 /* app.use(function printSession(req, res, next) {
     console.log('req.session', req.session);

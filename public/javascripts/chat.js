@@ -1,7 +1,7 @@
 const sendButt = document.getElementById('postmessage');
 const textArea = document.getElementById('content');
 const messagesView = document.getElementById('messagesView');
-const socket = io();
+var socket = io();
 
 sendButt.addEventListener('submit', e => {
     e.preventDefault();
@@ -18,7 +18,8 @@ sendButt.addEventListener('submit', e => {
     //TODO response
 });
 
-socket.on("chat", addChat);
+socket.on("chat", console.log);
+
 function viewMessages(messages) {
     if(messages) {
         messages = messages.map(itm => {
