@@ -30,7 +30,7 @@ window.onload = function() {
     getMessages();
 }
 
-function appendMessage(message) {
+/* function appendMessage(message) {
     message.created_at = new Date(message.created_at);
     const htmlMess =
     `<div class="other messageBox">
@@ -39,18 +39,18 @@ function appendMessage(message) {
         <p>at:${message.created_at.toLocaleString()}</p>
     </div>`;
     messagesView.innerHTML += htmlMess;
-}
+} */
 
 function viewMessages (messages) {
     if(messages) {
         messagesView.innerHTML = '';
         messages = messages.reverse().map(itm => {
             itm.created_at = new Date(itm.created_at);
+            //<span>${itm.from} </span>
             const htmlMess =
-            `<div class="${itm.className} messageBox">
-                <span>${itm.from} </span>
-                <span>at:${itm.created_at.toLocaleString()}</span>
+            `<div class="elc_container ${itm.className} messageBox">
                 <p>${itm.content}</p>
+                <span class="time-${itm.className}">at:${itm.created_at.toLocaleString()}</span>
             </div>`;
             messagesView.innerHTML += htmlMess;
             return itm;

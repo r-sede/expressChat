@@ -12,7 +12,43 @@ input {
 textarea {
   width: 100%;
 }
-.messageBox {
+/* Chat elc_containers */
+.elc_container {
+  border: 2px solid #dedede;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+.other {
+  border-color: #ccc;
+  background-color: #ddd;
+}
+
+.me {
+  border-color: #dedede;
+  background-color: #f1f1f1;
+}
+
+/* Clear floats */
+.elc_container::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* Style time text */
+.time-other {
+  float: right;
+  color: #aaa;
+}
+
+/* Style time text */
+.time-me {
+  float: left;
+  color: #999;
+}
+/* .messageBox {
   margin: 5px 0;
 }
 .messageBox :nth-child(1) {
@@ -26,4 +62,4 @@ textarea {
 }
 .me {
   background-color: #00B7FF
-}
+} */
