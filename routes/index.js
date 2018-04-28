@@ -34,7 +34,6 @@ router.post('/register', function (req, res, next) {
     req.body.passwordConf) {
       
       var userData = {
-        email: req.body.email,
         username: req.body.username,
         password: req.body.password,
         passwordConf: req.body.passwordConf,
@@ -45,7 +44,7 @@ router.post('/register', function (req, res, next) {
           return next(error);
         } else {
           req.session.userId = user._id;
-          return res.redirect('/profile');
+          return res.redirect('/chat');
         }
       });
       
@@ -67,6 +66,7 @@ router.post('/register', function (req, res, next) {
         } else {
           req.session.userId = user._id;
           req.session.save();
+
           return res.redirect('/chat');
         }
       });
@@ -104,7 +104,7 @@ router.post('/register', function (req, res, next) {
         if (error) {
           return next(error);
         } else {
-          return res.redirect('/');
+          return res.redirect('/login');
         }
       });
     }
@@ -119,14 +119,13 @@ router.post('/register', function (req, res, next) {
         }else if (user === null) {
           return res.redirect('/login');
         }else {
-          Chat.find().sort('-createdAt')
+          Chat.find({}).sort({'created_at':-1}).limit(5)
           .exec(function(error, messages) {
             if (error) {
               return next(error);
             }
             messages = messages.map(itm => {
               const className = (user.username === itm.from) ? 'me' : 'other';
-              /* return {className: className,from: itm.from, content: itm.content, createdAt:itm.createdAt,_id:itm._id,__v:itm.__v}; */
               return {className: className,...itm._doc};
             });
             /*  console.log(JSON.stringify(messages,null,2)); */
@@ -141,6 +140,7 @@ router.post('/register', function (req, res, next) {
   
   router.post('/postmessage', function(req, res, next) {
     if (req.session) {
+      req.body.content = req.body.content.trim();
       if (req.body.content) {
         /*       console.log(req.session.userId); */
         User.findById(req.session.userId)

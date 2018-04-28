@@ -1,6 +1,6 @@
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
@@ -8,4 +8,22 @@ a {
 }
 input {
   display: block;
+}
+textarea {
+  width: 100%;
+}
+.messageBox {
+  margin: 5px 0;
+}
+.messageBox :nth-child(1) {
+  font-weight: bold;
+}
+.messageBox :nth-child(2) {
+  font-size: 0.8em;
+}
+.other {
+  background-color: blueviolet;
+}
+.me {
+  background-color: #00B7FF
 }

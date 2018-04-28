@@ -14,6 +14,7 @@ var app = express();
 var io= socket_io();
 app.io=io;
 
+
 var indexRouter = require('./routes/index')(io);
 var usersRouter = require('./routes/users');
 
@@ -33,7 +34,7 @@ app.use(session({
 }));
 
 io.on("connection", (socket) => {
-  console.log("Socket is connected...")
+  console.log("Socket is connected... ...")
 });
 
 /* app.use(function printSession(req, res, next) {

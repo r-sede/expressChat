@@ -3,8 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www",
-    "debugw": "SET DEBUG=expresschatlana:* & npm start"
+    "start": "node ./bin/www",
+    "debugw": "SET DEBUG=expresschatlana:* & npm run watch",
+    "watch": "nodemon ./bin/www"
   },
   "dependencies": {
     "bcrypt": "^2.0.1",
