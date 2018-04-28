@@ -16,6 +16,11 @@ var UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+  },
+  avatar: {
+    type: String,
+    required: true,
+    default: '/images/defaultAvatar.jpg'
   }
 /*   passwordConf: {
     type: String,

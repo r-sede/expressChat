@@ -78,6 +78,43 @@ router.post('/register', function (req, res, next) {
   });
   
   // GET route after registering
+  router.get('/profile', function(req, res, next){
+    User.findById(req.session.userId)
+    .exec(function (error, user) {
+      if (error) {
+        return next(error);
+      } else {
+        if (user === null) {
+          /*           var err = new Error('Not authorized! Go back!');
+          err.status = 400;
+          return next(err); */
+          return res.redirect('/login');
+        } else {
+          res.sendFile(path.join(__dirname, '../views/profile.html'));
+        }
+      }
+    });
+  });
+
+    // GET route after registering
+    router.get('/getProfile', function(req, res, next){
+      User.findById(req.session.userId)
+      .exec(function (error, user) {
+        if (error) {
+          return next(error);
+        } else {
+          if (user === null) {
+            /*           var err = new Error('Not authorized! Go back!');
+            err.status = 400;
+            return next(err); */
+            return res.redirect('/login');
+          } else {
+            res.json({'avatar': user.avatar, 'username': user.username});
+          }
+        }
+      });
+    });
+
   router.get('/chat', function (req, res, next) {
     User.findById(req.session.userId)
     .exec(function (error, user) {
@@ -109,7 +146,7 @@ router.post('/register', function (req, res, next) {
       });
     }
   });
-  
+
   router.get('/messages', function(req,res,next) {
     if(req.session) {
       
