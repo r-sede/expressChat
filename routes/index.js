@@ -7,6 +7,8 @@ module.exports = function (io) {
   var urlencodedParser = bodyParser.urlencoded({ extended: false });
   var User = require('../models/User');
   var Chat = require('../models/Chat');
+
+  var fs = require('fs-extra');
   /* GET home page. */
   router.get('/', function(req, res, next) {
     res.sendFile(path.join(__dirname, '../public/accueuil.html'));
@@ -96,6 +98,43 @@ router.post('/register', function (req, res, next) {
     });
   });
 
+  router.post('/updateAvatar', function(req,res,next) {
+      User.findById(req.session.userId)
+      .exec(function (error, user) {
+        if (error) {
+          return next(error);
+        } else {
+          if (user === null) {
+            /*           var err = new Error('Not authorized! Go back!');
+            err.status = 400;
+            return next(err); */
+            return res.redirect('/login');
+          } else {
+            var fstream;
+            req.pipe(req.busboy);
+            req.busboy.on('file', function (fieldname, file, filename) {
+                console.log("Uploading: " + filename);
+    
+                //Path where image will be uploaded
+                fstream = fs.createWriteStream(__dirname + '/../public/images/avatars/' + filename);
+                file.pipe(fstream);
+                fstream.on('close', function () {    
+                    console.log("Upload Finished of " + filename);
+                    
+                    User.findByIdAndUpdate(user._id ,  {avatar:'images/avatars/'+filename},null,err=>{
+                      if(!err) {
+                        res.redirect('back');
+                      }
+                    });
+                    /* user.set({avatar : 'images/'+filename}); */
+
+                });
+            });
+          }
+        }
+      });
+  });
+
     // GET route after registering
     router.get('/getProfile', function(req, res, next){
       User.findById(req.session.userId)
@@ -164,6 +203,7 @@ router.post('/register', function (req, res, next) {
             messages = messages.map(itm => {
               const className = (user.username === itm.from) ? 'me' : 'other';
               return {className: className,...itm._doc};
+
             });
             /*  console.log(JSON.stringify(messages,null,2)); */
             res.json(messages);

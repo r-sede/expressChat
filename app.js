@@ -1,24 +1,25 @@
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var session = require('express-session');
-var bodyParser = require('body-parser');
-var mongoose = require('mongoose');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+var busboy = require('connect-busboy');
+
+
 mongoose.connect('mongodb://localhost/chat');
 
 //overide mongoose promise library
 mongoose.Promise = Promise;
-var socket_io    = require( "socket.io" );
-var app = express();
-var io= socket_io();
+const socket_io    = require( "socket.io" );
+const app = express();
+const io= socket_io();
 app.io=io;
 
 
-var indexRouter = require('./routes/index')(io);
-var usersRouter = require('./routes/users');
-
-
+const indexRouter = require('./routes/index')(io);
+const usersRouter = require('./routes/users');
 
 
 app.use(logger('dev'));
@@ -26,6 +27,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(busboy());
+
 //use sessions for tracking logins
 app.use(session({
   secret: 'work hard',//env

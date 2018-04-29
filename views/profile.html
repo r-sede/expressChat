@@ -5,18 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <!--     <link rel="stylesheet" href="/stylesheets/style.css"/> -->
+    <style>
+        body {
+            padding: 50px;
+            font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
+        }
+        a {
+            color: #00B7FF;
+        }
+        input {
+            display: block;
+        }
+        textarea {
+            width: 100%;
+        }
+        img {
+            max-width: 128px;
+        }
+    </style>
     <title>Profile</title>
 </head>
 <body>
     <h2></h2>
     <img src="" alt=""/>
-<!--     <form method="POST" action="/login">
-        <label for="username">username:</label>
-        <input id="username" name="username" type="text" required value="papa">
-        <label for="password">password:</label>
-        <input id="password" name="password" type="password" required value="papa">
-        <input type="submit" value="login">
-    </form> -->
+    <form method="POST" action="/updateAvatar" enctype="multipart/form-data">
+        <label for="avatarFile">avatarFile:</label>
+        <input id="avatarFile" name="avatarFile" type="file" required >
+        <input type="submit" value="send">
+    </form>
 </body>
     <script type="text/javascript">
         window.onload = function() {
@@ -32,6 +48,8 @@
             .then(res => res.json())
             .then(profile => {
                 img.src = profile.avatar;
+                img.alt = profile.username;
+                img.title = profile.username;
                 username.innerHTML = profile.username;
             });
 
