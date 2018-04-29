@@ -1,3 +1,4 @@
+/*jshint esversion:6*/
 module.exports = function (io) {
 
   var express = require('express');
@@ -39,7 +40,7 @@ router.post('/register', function (req, res, next) {
         username: req.body.username,
         password: req.body.password,
         passwordConf: req.body.passwordConf,
-      }
+      };
       
       User.create(userData, function (error, user) {
         if (error) {
@@ -55,7 +56,7 @@ router.post('/register', function (req, res, next) {
       err.status = 400;
       return next(err);
     }
-  })
+  });
   
   router.post('/login', function(req,res,next) {
     /* return res.send(req.body.username); */
@@ -143,7 +144,7 @@ router.post('/register', function (req, res, next) {
           return next(error);
         } else {
           if (user === null) {
-            /*           var err = new Error('Not authorized! Go back!');
+            /*var err = new Error('Not authorized! Go back!');
             err.status = 400;
             return next(err); */
             return res.redirect('/login');
@@ -161,7 +162,7 @@ router.post('/register', function (req, res, next) {
         return next(error);
       } else {
         if (user === null) {
-          /*           var err = new Error('Not authorized! Go back!');
+          /*var err = new Error('Not authorized! Go back!');
           err.status = 400;
           return next(err); */
           return res.redirect('/login');
@@ -187,32 +188,33 @@ router.post('/register', function (req, res, next) {
   });
 
   router.get('/messages', function(req,res,next) {
-    if(req.session) {
-      
-      User.findById(req.session.userId).exec(function(error,user){
-        if (error) {
-          return next(error);
-        }else if (user === null) {
-          return res.redirect('/login');
-        }else {
-          Chat.find({}).sort({'created_at':-1}).limit(5)
-          .exec(function(error, messages) {
-            if (error) {
-              return next(error);
-            }
-            messages = messages.map(itm => {
-              const className = (user.username === itm.from) ? 'me' : 'other';
-              return {className: className,...itm._doc};
+    let messages = [];
+    let authUser; 
+     User.findById(req.session.userId)
+      .then((user,err) => {
+        if(!user) { throw Error('Noonn!'); }
 
-            });
-            /*  console.log(JSON.stringify(messages,null,2)); */
-            res.json(messages);
-          })
-        }
+        authUser = user;
+        return Chat.find({}).sort({'created_at':-1}).limit(5);
       })
-      
-      
-    }
+      .catch(err => {
+        console.log(err);
+        return res.redirect('/login');
+      })
+      .then(chats => {
+        chats.forEach(itm => {
+          const className = (authUser.username === itm.from) ? 'me' : 'other';
+          // jshint ignore:start
+          messages.push({
+              ...itm._doc,
+              className: className,
+              avatar: authUser.avatar
+            });
+          // jshint ignore:end
+        }); 
+        return res.json(messages);
+      })
+      .catch(err => next(err));
   });
   
   router.post('/postmessage', function(req, res, next) {
@@ -251,5 +253,5 @@ router.post('/register', function (req, res, next) {
     }//rdeirect
   });
   return router;
-}
+};
   
