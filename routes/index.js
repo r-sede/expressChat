@@ -200,13 +200,17 @@ router.post('/register', function (req, res, next) {
             if (error) {
               return next(error);
             }
-            messages = messages.map(itm => {
+            const result = []
+            messages = messages.forEach((itm, i) => {
               const className = (user.username === itm.from) ? 'me' : 'other';
-              return {className: className,...itm._doc};
+              User.findOne({username:itm.from}).exec(function(err, doc) {
+                console.log(i);
+                result.push({className: className, avatar: doc.avatar,...itm._doc});
+              });
 
             });
             /*  console.log(JSON.stringify(messages,null,2)); */
-            res.json(messages);
+            res.json(result);
           })
         }
       })
