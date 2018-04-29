@@ -1,3 +1,4 @@
+/*jshint esversion:6*/
 const sendButt = document.getElementById('postmessage');
 const textArea = document.getElementById('content');
 const messagesView = document.getElementById('messagesView');
@@ -28,18 +29,8 @@ window.onload = function() {
     
     socket.on("chat", getMessages);
     getMessages();
-}
+};
 
-/* function appendMessage(message) {
-    message.created_at = new Date(message.created_at);
-    const htmlMess =
-    `<div class="other messageBox">
-        <span>${message.from}: </span>
-        <p>${message.content}</p>
-        <p>at:${message.created_at.toLocaleString()}</p>
-    </div>`;
-    messagesView.innerHTML += htmlMess;
-} */
 
 function viewMessages (messages) {
     if(messages) {
@@ -49,6 +40,7 @@ function viewMessages (messages) {
             //<span>${itm.from} </span>
             const htmlMess =
             `<div class="elc_container ${itm.className} messageBox">
+                <img src="${itm.avatar}" alt="${itm.from}" title="${itm.from}" class="${itm.className}">
                 <p>${itm.content}</p>
                 <span class="time-${itm.className}">at:${itm.created_at.toLocaleString()}</span>
             </div>`;

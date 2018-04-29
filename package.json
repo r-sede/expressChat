@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
+    "debug": "DEBUG=expresschatlana:* & npm run watch",
     "debugw": "SET DEBUG=expresschatlana:* & npm run watch",
     "watch": "nodemon ./bin/www"
   },
