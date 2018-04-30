@@ -212,7 +212,7 @@ router.post('/register', function (req, res, next) {
               avatar: itm.fromavatar
             });
           // jshint ignore:end
-        }); 
+        });
         return res.json(messages);
       })
       .catch(err => next(err));
