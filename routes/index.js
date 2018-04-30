@@ -204,11 +204,12 @@ router.post('/register', function (req, res, next) {
       .then(chats => {
         chats.forEach(itm => {
           const className = (authUser.username === itm.from) ? 'me' : 'other';
+          
           // jshint ignore:start
           messages.push({
               ...itm._doc,
               className: className,
-              avatar: authUser.avatar
+              avatar: itm.fromavatar
             });
           // jshint ignore:end
         }); 
@@ -233,7 +234,10 @@ router.post('/register', function (req, res, next) {
               return next(err); */
               return res.redirect('/login');
             } else {
+              console.log(user.avatar);
               var chatData = {
+                // fromid:user_id,
+                fromavatar: user.avatar,
                 from: user.username,
                 content: req.body.content
               };
