@@ -1,3 +1,4 @@
+/*jshint esversion:6*/
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -37,7 +38,7 @@ app.use(session({
 }));
 
 io.on("connection", (socket) => {
-  console.log("Socket is connected... ...")
+  console.log("Socket is connected...");
 });
 
 /* app.use(function printSession(req, res, next) {
