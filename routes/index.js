@@ -235,7 +235,7 @@ router.post('/register', function (req, res, next) {
               return next(err); */
               return res.redirect('/login');
             } else {
-              console.log(user.avatar);
+              // console.log(user.avatar);
               var chatData = {
                 // fromid:user_id,
                 fromavatar: user.avatar,
