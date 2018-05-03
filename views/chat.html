@@ -9,15 +9,20 @@
 </head>
 <body>
     <a style="display:inline" href="/logout">logout</a>
+    <a style="display:inline" href="/profile">profile</a>
+
     <div id="messagesView">
 
     </div>
+
     <form action="/sendmessage" method="POST" id="postmessage">
-        <textarea style="display:inline" name="content" id="content" cols="30" rows="10" required></textarea>
-        <input style="display:inline" type="submit" value="send">
+        <input type="text" style="display:inline" name="content" id="content" required/>
+        <input style="display:inline" type="submit" value="send"/>
     </form>
+    
     <script src="javascripts/socket.io.slim.js" type="text/javascript"></script>
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=fetch"></script>
+    <script>(function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href"in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone")</script>
     <script src="javascripts/dist/chat.js" type="text/javascript"></script>
 </body>
 </html>

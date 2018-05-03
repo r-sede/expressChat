@@ -41,10 +41,10 @@ io.on("connection", (socket) => {
   console.log("Socket is connected...");
 });
 
-/* app.use(function printSession(req, res, next) {
+ app.use(function printSession(req, res, next) {
     console.log('req.session', req.session);
     return next();
-  }); */
+  }); 
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);

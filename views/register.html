@@ -8,6 +8,7 @@
     <title>Register</title>
 </head>
 <body>
+    <a href="/">back</a>
     <form method="POST" action="/register">
 <!--         <label for="email">email:</label>
         <input id="email" name="email" type="text" required> -->
@@ -19,9 +20,10 @@
         <input id="password" name="password" type="password" required>
 
         <label for="passwordConf">confirm:</label>
-        <input id="passwordConf" name="passwordConf" type="passwordConf" required>
+        <input id="passwordConf" name="passwordConf" type="password" required>
 
         <input type="submit" value="register">
     </form>
+    <script>(function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href"in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone")</script>
 </body>
 </html>

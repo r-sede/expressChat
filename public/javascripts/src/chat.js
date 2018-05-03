@@ -3,8 +3,10 @@ const sendButt = document.getElementById('postmessage');
 const textArea = document.getElementById('content');
 const messagesView = document.getElementById('messagesView');
 var socket = io();
+var notifsound = new Audio('/sound/plop.m4a');
 
 window.onload = () => {
+      
 
     sendButt.addEventListener('submit', e => {
         e.preventDefault();
@@ -27,34 +29,44 @@ window.onload = () => {
     });
     
     
-    socket.on("chat", getMessages);
-    getMessages();
+    socket.on("chat", ()=> {
+        getMessages(false);
+    });
+    getMessages(true);
 };
 
 
 function viewMessages (messages) {
-    if(messages) {
-        messagesView.innerHTML = '';
-        messages = messages.reverse().map(itm => {
-            itm.created_at = new Date(itm.created_at);
-            //<span>${itm.from} </span>
-            const htmlMess =
-            `<div class="elc_container ${itm.className} messageBox">
-                <img src="${itm.avatar}" alt="${itm.from}" title="${itm.from}" class="${itm.className}">
-                <p>${itm.content}</p>
-                <span class="time-${itm.className}">at:${itm.created_at.toLocaleString()}</span>
-            </div>`;
-            messagesView.innerHTML += htmlMess;
-            return itm;
-        });
-    }
+    return new Promise((resolve,reject) => {
+        if(messages) {
+            messagesView.innerHTML = '';
+            messages = messages.reverse().map(itm => {
+                itm.created_at = new Date(itm.created_at);
+                //<span>${itm.from} </span>
+                const htmlMess =
+                `<div class="elc_container ${itm.className} messageBox">
+                    <img src="${itm.avatar}" alt="${itm.from}" title="${itm.from}" class="${itm.className}">
+                    <p>${itm.content}</p>
+                    <span class="time-${itm.className}">at:${itm.created_at.toLocaleString('Fr-fr')}</span>
+                </div>`;
+                messagesView.innerHTML += htmlMess;
+                return itm;
+            });
+            resolve();
+        }
+        reject();
+    });
 }
 
-function getMessages() {
+function getMessages(startup) {
     fetch('/messages', {
         headers: {
             'Content-Type': 'application/json'
         },
         credentials: 'include'
-    }).then(res => res.json() ).then(viewMessages);
+    }).then(res => res.json() ).then(viewMessages).then(()=> {
+        if (!startup) {
+            notifsound.play();
+        }
+    });
 }

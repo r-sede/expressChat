@@ -12,22 +12,7 @@ module.exports = function (io) {
   var fs = require('fs-extra');
   /* GET home page. */
   router.get('/', function(req, res, next) {
-    User.findById(req.session.userId)
-    .exec(function (error, user) {
-      if (error) {
-        return next(error);
-      } else {
-        if (user === null) {
-          /*           var err = new Error('Not authorized! Go back!');
-          err.status = 400;
-          return next(err); */
-          return res.sendFile(path.join(__dirname, '../views/login.html'));
-        } else {
-          return res.sendFile(path.join(__dirname, '../views/chat.html'));
-        }
-      }
-    });
-    
+    res.sendFile(path.join(__dirname, '../public/accueuil.html'));
   });
 
   router.get('/register', function(req,res,next) {
@@ -272,5 +257,6 @@ router.post('/register', function (req, res, next) {
       }
     }//rdeirect
   });
+  
   return router;
 };

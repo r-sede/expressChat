@@ -7,17 +7,14 @@
 <!--     <link rel="stylesheet" href="/stylesheets/style.css"/> -->
     <style>
         body {
-            padding: 50px;
             font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
+            padding: 50px;
         }
         a {
             color: #00B7FF;
         }
         input {
             display: block;
-        }
-        textarea {
-            width: 100%;
         }
         img {
             max-width: 128px;
@@ -26,6 +23,7 @@
     <title>Profile</title>
 </head>
 <body>
+    <a href="/chat">back</a>
     <h2></h2>
     <img src="" alt=""/>
     <form method="POST" action="/updateAvatar" enctype="multipart/form-data">
@@ -35,5 +33,6 @@
     </form>
 </body>
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=fetch"></script>
+    <script>(function(a,b,c){if(c in b&&b[c]){var d,e=a.location,f=/^(a|html)$/i;a.addEventListener("click",function(a){d=a.target;while(!f.test(d.nodeName))d=d.parentNode;"href"in d&&(d.href.indexOf("http")||~d.href.indexOf(e.host))&&(a.preventDefault(),e.href=d.href)},!1)}})(document,window.navigator,"standalone")</script>
     <script type="text/javascript" src="javascripts/dist/profile.js"></script>
 </html>
